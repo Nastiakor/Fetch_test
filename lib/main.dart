@@ -3,33 +3,41 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
-class Album {
-  final String fact;
-
-  const Album({
-    required this.fact,
-  });
-
-  factory Album.fromJson(String fact) {
-    return Album(
-      fact: fact,
-    );
-  }
-}
-
-Future<Album> fetchCatFact() async {
-  final response = await http.get(Uri.parse('https://catfact.ninja/fact'));
+Future<Album> fetchPost() async {
+  final response = await http.get(Uri.parse('http://localhost/posts'));
 
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     // then parse the JSON.
     final jsonResponse = jsonDecode(response.body);
-    final fact = jsonResponse['fact'];
-    return Album.fromJson(fact);
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load cat fact');
+    if (jsonResponse is List) {
+      final firstItem = jsonResponse[0];
+      final description = firstItem['description'];
+      return Album.fromJson({'description': description});
+    } else if (jsonResponse is Map<String, dynamic>) {
+      // Handle the case when jsonResponse is a map
+      // You can access the properties of the object using jsonResponse['propertyName']
+      final description = jsonResponse['description'];
+      return Album.fromJson(jsonResponse);
+    }
+  }
+
+  // If the server did not return a 200 OK response,
+  // then throw an exception.
+  throw Exception('Failed to load description');
+}
+
+class Album {
+  final String description;
+
+  const Album({
+    required this.description,
+  });
+
+  factory Album.fromJson(Map<String, dynamic> json) {
+    return Album(
+      description: json['description'],
+    );
   }
 }
 
@@ -48,7 +56,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    futureAlbum = fetchCatFact();
+    futureAlbum = fetchPost();
   }
 
   @override
@@ -67,7 +75,7 @@ class _MyAppState extends State<MyApp> {
             future: futureAlbum,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return Text(snapshot.data!.fact);
+                return Text(snapshot.data!.description);
               } else if (snapshot.hasError) {
                 return Text('${snapshot.error}');
               }
@@ -81,7 +89,6 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
 
 /*
 Future<Album> fetchAlbum() async {
@@ -168,7 +175,6 @@ class _MyAppState extends State<MyApp> {
   }
 }
 */
-
 
 /*List<dynamic> articles = [];
 
