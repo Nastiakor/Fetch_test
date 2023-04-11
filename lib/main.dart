@@ -1,46 +1,35 @@
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
 
-Future<Post> fetchPost() async {
-  final response = await http
-      .get(Uri.parse('http://localhost/posts'));
-  print(response);
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
-    return Post.fromJson(jsonDecode(response.body));
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load posts');
+class Album {
+  final String fact;
+
+  const Album({
+    required this.fact,
+  });
+
+  factory Album.fromJson(String fact) {
+    return Album(
+      fact: fact,
+    );
   }
 }
 
-class Post {
-  final int userId;
-  final int id;
-  final String description;
-  final String? img_url;
-  final String date;
+Future<Album> fetchCatFact() async {
+  final response = await http.get(Uri.parse('https://catfact.ninja/fact'));
 
-  const Post({
-    required this.userId,
-    required this.id,
-    required this.description,
-    this.img_url,
-    required this.date,
-  });
-
-  factory Post.fromJson(Map<String, dynamic> json) {
-    return Post(
-      userId: json['userId'],
-      id: json['id'],
-      description: json['description'],
-      img_url: json['img_url'],
-      date: json['date'],
-    );
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    final jsonResponse = jsonDecode(response.body);
+    final fact = jsonResponse['fact'];
+    return Album.fromJson(fact);
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    throw Exception('Failed to load cat fact');
   }
 }
 
@@ -54,12 +43,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late Future<Post> futurePost;
+  late Future<Album> futureAlbum;
 
   @override
   void initState() {
     super.initState();
-    futurePost = fetchPost();
+    futureAlbum = fetchCatFact();
   }
 
   @override
@@ -74,13 +63,13 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Fetch Data Example'),
         ),
         body: Center(
-          child: FutureBuilder<Post>(
-            future: futurePost,
+          child: FutureBuilder<Album>(
+            future: futureAlbum,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return Text(snapshot.data!.date);
+                return Text(snapshot.data!.fact);
               } else if (snapshot.hasError) {
-                return Text('error');
+                return Text('${snapshot.error}');
               }
 
               // By default, show a loading spinner.
@@ -92,6 +81,93 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
+
+/*
+Future<Album> fetchAlbum() async {
+  final response = await http
+      .get(Uri.parse('https://catfact.ninja/fact'));
+
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    return Album.fromJson(jsonDecode(response.body));
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    throw Exception('Failed to load album');
+  }
+}
+
+class Album {
+  final int userId;
+  final int id;
+  final String description;
+
+  const Album({
+    required this.userId,
+    required this.id,
+    required this.description,
+  });
+
+  factory Album.fromJson(Map<String, dynamic> json) {
+    return Album(
+      userId: json['userId'],
+      id: json['id'],
+      description: json['title'],
+    );
+  }
+}
+
+void main() => runApp(const MyApp());
+
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late Future<Album> futureAlbum;
+
+  @override
+  void initState() {
+    super.initState();
+    futureAlbum = fetchAlbum();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Fetch Data Example',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Fetch Data Example'),
+        ),
+        body: Center(
+          child: FutureBuilder<Album>(
+            future: futureAlbum,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text(snapshot.data!.description);
+              } else if (snapshot.hasError) {
+                return Text('${snapshot.error}');
+              }
+
+              // By default, show a loading spinner.
+              return const CircularProgressIndicator();
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+*/
 
 
 /*List<dynamic> articles = [];
