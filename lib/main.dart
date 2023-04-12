@@ -12,13 +12,16 @@ Future<Album> fetchPost() async {
     final jsonResponse = jsonDecode(response.body);
     if (jsonResponse is List) {
       final firstItem = jsonResponse[0];
+      print('firstitem ${firstItem}');
       final description = firstItem['description'];
       return Album.fromJson({'description': description});
     } else if (jsonResponse is Map<String, dynamic>) {
       // Handle the case when jsonResponse is a map
       // You can access the properties of the object using jsonResponse['propertyName']
       final description = jsonResponse['description'];
-      return Album.fromJson(jsonResponse);
+      final image = jsonResponse['img_url'];
+      return Album.fromJson(
+          {'description': description, 'image': image != null ? image : ''});
     }
   }
 
@@ -29,15 +32,12 @@ Future<Album> fetchPost() async {
 
 class Album {
   final String description;
+  final String? image;
 
-  const Album({
-    required this.description,
-  });
+  const Album({required this.description, this.image});
 
   factory Album.fromJson(Map<String, dynamic> json) {
-    return Album(
-      description: json['description'],
-    );
+    return Album(description: json['description'], image: json['image']);
   }
 }
 
@@ -70,20 +70,27 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Fetch Data Example'),
         ),
-        body: Center(
-          child: FutureBuilder<Album>(
-            future: futureAlbum,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Text(snapshot.data!.description);
-              } else if (snapshot.hasError) {
-                return Text('${snapshot.error}');
-              }
-
-              // By default, show a loading spinner.
-              return const CircularProgressIndicator();
-            },
-          ),
+        body: Column(
+          children: [
+            FutureBuilder<Album>(
+              future: futureAlbum,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Column(
+                    children: [
+                      Text(snapshot.data!.description),
+                      if (snapshot.data!.image != null)
+                        Image.network(snapshot.data!.image!),
+                    ],
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('${snapshot.error}');
+                }
+                // By default, show a loading spinner.
+                return const CircularProgressIndicator();
+              },
+            ),
+          ],
         ),
       ),
     );
