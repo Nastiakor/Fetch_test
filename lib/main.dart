@@ -2,26 +2,28 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:my_app/post_widget.dart';
 
 Future<Album> fetchPost() async {
-  final response = await http.get(Uri.parse('http://localhost/posts'));
-
+  final response = await http.get(Uri.parse('http://localhost/api/posts'));
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     // then parse the JSON.
     final jsonResponse = jsonDecode(response.body);
     if (jsonResponse is List) {
       final firstItem = jsonResponse[0];
-      print('firstitem ${firstItem}');
-      final description = firstItem['description'];
-      return Album.fromJson({'description': description});
-    } else if (jsonResponse is Map<String, dynamic>) {
+      print('jsonResponse ${jsonResponse}');
+      final content = firstItem['content'];
+      final picture = firstItem['picture'];
+      print('jsonResponse ${content}');
+      return Album.fromJson({'content': content, 'picture': picture});
+      // } else if (jsonResponse is Map<String, dynamic>) {
       // Handle the case when jsonResponse is a map
       // You can access the properties of the object using jsonResponse['propertyName']
-      final description = jsonResponse['description'];
-      final image = jsonResponse['img_url'];
-      return Album.fromJson(
-          {'description': description, 'image': image != null ? image : ''});
+      // final description = jsonResponse['description'];
+      // final image = jsonResponse['img_url'];
+      // return Album.fromJson(
+      // {'description': description, 'image': image != null ? image : ''});
     }
   }
 
@@ -31,13 +33,14 @@ Future<Album> fetchPost() async {
 }
 
 class Album {
-  final String description;
-  final String? image;
+  final String content;
+  final String? picture;
 
-  const Album({required this.description, this.image});
+  const Album({required this.content, this.picture});
 
   factory Album.fromJson(Map<String, dynamic> json) {
-    return Album(description: json['description'], image: json['image']);
+    print(json['picture']);
+    return Album(content: json['description'], picture: json['picture']);
   }
 }
 
@@ -62,25 +65,47 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Fetch Data Example',
+      title: 'Flutter Instagram',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Fetch Data Example'),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: Image.asset(
+            'images/Insta_logo.png',
+            height: 50,
+          ),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(
+                Icons.add_a_photo_outlined,
+                color: Colors.black,
+              ),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: const Icon(
+                Icons.favorite_border_outlined,
+                color: Colors.black,
+              ),
+              onPressed: () {},
+            ),
+          ],
         ),
-        body: Column(
-          children: [
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
             FutureBuilder<Album>(
               future: futureAlbum,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return Column(
                     children: [
-                      Text(snapshot.data!.description),
-                      if (snapshot.data!.image != null)
-                        Image.network(snapshot.data!.image!),
+                      // Text(snapshot.data!.content),
+                   // if (snapshot.data!.picture != null)
+                        Image.network('http://localhost/storage/posts/Qp7rRraKhEv6jsaXei8Gz8vJC9tu8PecJSjkNxwI.jpg'),
                     ],
                   );
                 } else if (snapshot.hasError) {
@@ -89,6 +114,46 @@ class _MyAppState extends State<MyApp> {
                 // By default, show a loading spinner.
                 return const CircularProgressIndicator();
               },
+            ),
+          ],
+        ),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          unselectedItemColor: Colors.grey.shade700,
+          selectedItemColor: Colors.black,
+          items: const [
+            BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.home_outlined,
+                ),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(
+                Icons.search,
+                ),
+              label: 'Search',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.video_camera_back_outlined,
+              ),
+              label: 'Video',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.message_rounded,
+              ),
+              label: 'Message',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.person_off_outlined,
+              ),
+              label: 'Profile',
             ),
           ],
         ),
