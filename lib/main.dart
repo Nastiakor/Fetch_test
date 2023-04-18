@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 Future<Album> fetchPost() async {
-  final response = await http.get(Uri.parse('http://localhost/posts'));
+  final response = await http.get(Uri.parse('http://localhost/api/posts'));
 
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
@@ -13,16 +13,21 @@ Future<Album> fetchPost() async {
     if (jsonResponse is List) {
       final firstItem = jsonResponse[0];
       print('firstitem ${firstItem}');
-      final description = firstItem['description'];
-      return Album.fromJson({'description': description});
-    } else if (jsonResponse is Map<String, dynamic>) {
+      print(jsonResponse);
+      final description = firstItem['content'];
+      final pic = firstItem['picture'];
+      final image = "http://192.168.6.143/storage/" + pic;
+      print(image);
+      return Album.fromJson({'content': description, 'image': image});
+    }
+    // else if (jsonResponse is Map<String, dynamic>) {
       // Handle the case when jsonResponse is a map
       // You can access the properties of the object using jsonResponse['propertyName']
-      final description = jsonResponse['description'];
-      final image = jsonResponse['img_url'];
-      return Album.fromJson(
-          {'description': description, 'image': image != null ? image : ''});
-    }
+      // final description = jsonResponse['description'];
+      // final image = jsonResponse['picture'];
+      //return Album.fromJson(
+          // {'description': description, 'image': image != null ? image : ''});
+    //}
   }
 
   // If the server did not return a 200 OK response,
@@ -37,7 +42,7 @@ class Album {
   const Album({required this.description, this.image});
 
   factory Album.fromJson(Map<String, dynamic> json) {
-    return Album(description: json['description'], image: json['image']);
+    return Album(description: json['content'], image: json['image']);
   }
 }
 
@@ -79,8 +84,8 @@ class _MyAppState extends State<MyApp> {
                   return Column(
                     children: [
                       Text(snapshot.data!.description),
-                      if (snapshot.data!.image != null)
-                        Image.network(snapshot.data!.image!),
+                      // if (snapshot.data!.image != null)
+                        Image.network('http://192.168.6.143/storage/posts/Qp7rRraKhEv6jsaXei8Gz8vJC9tu8PecJSjkNxwI.jpg'),
                     ],
                   );
                 } else if (snapshot.hasError) {
