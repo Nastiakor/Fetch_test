@@ -10,16 +10,24 @@ Future<Album> fetchPost() async {
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     // then parse the JSON.
-    final jsonResponse = jsonDecode(response.body);
-    if (jsonResponse is List) {
-      final firstItem = jsonResponse[0];
-      print('firstitem ${firstItem}');
-      print(jsonResponse);
-      final description = firstItem['content'];
-      final pic = firstItem['picture'];
-      final image = "http://192.168.6.143/storage/" + pic;
-      print(image);
-      return Album.fromJson({'content': description, 'image': image});
+    //final jsonResponse = jsonDecode(response.body);
+    return Album.fromJson(jsonDecode(response.body));
+    }
+    else {
+    throw Exception('Failed to load description');
+    }
+
+
+    //if (jsonResponse is List) {
+      //final firstItem = jsonResponse[0];
+      //print('firstitem ${firstItem}');
+      //print(jsonResponse);
+     // final description = firstItem['content'];
+      //final pic = firstItem['picture'];
+      //final image = "http://192.168.6.143/storage/" + pic;
+      //print(image);
+     // return Album.fromJson({'content': description, 'image': image});
+
     }
     // else if (jsonResponse is Map<String, dynamic>) {
       // Handle the case when jsonResponse is a map
@@ -29,22 +37,22 @@ Future<Album> fetchPost() async {
       //return Album.fromJson(
           // {'description': description, 'image': image != null ? image : ''});
     //}
-  }
+  //}
 
   // If the server did not return a 200 OK response,
   // then throw an exception.
-  throw Exception('Failed to load description');
-}
+  //
+//}
 
 class Album {
-  final String content;
-  final String? picture;
+  final String description;
+  final String picture;
 
-  const Album({required this.content, this.picture});
+
+  const Album({required this.description, required this.picture});
 
   factory Album.fromJson(Map<String, dynamic> json) {
-
-    return Album(description: json['content'], image: json['image']);
+    return Album(description: json['content'], picture: "http://192.168.6.143/storage/+ ${json['picture']}");
   }
 }
 
