@@ -6,25 +6,29 @@ import 'package:my_app/post_widget.dart';
 
 Future<Album> fetchPost() async {
   final response = await http.get(Uri.parse('http://localhost/api/posts'));
+
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     // then parse the JSON.
     final jsonResponse = jsonDecode(response.body);
     if (jsonResponse is List) {
       final firstItem = jsonResponse[0];
-      print('jsonResponse ${jsonResponse}');
-      final content = firstItem['content'];
-      final picture = firstItem['picture'];
-      print('jsonResponse ${content}');
-      return Album.fromJson({'content': content, 'picture': picture});
-      // } else if (jsonResponse is Map<String, dynamic>) {
+      print('firstitem ${firstItem}');
+      print(jsonResponse);
+      final description = firstItem['content'];
+      final pic = firstItem['picture'];
+      final image = "http://192.168.6.143/storage/" + pic;
+      print(image);
+      return Album.fromJson({'content': description, 'image': image});
+    }
+    // else if (jsonResponse is Map<String, dynamic>) {
       // Handle the case when jsonResponse is a map
       // You can access the properties of the object using jsonResponse['propertyName']
       // final description = jsonResponse['description'];
-      // final image = jsonResponse['img_url'];
-      // return Album.fromJson(
-      // {'description': description, 'image': image != null ? image : ''});
-    }
+      // final image = jsonResponse['picture'];
+      //return Album.fromJson(
+          // {'description': description, 'image': image != null ? image : ''});
+    //}
   }
 
   // If the server did not return a 200 OK response,
@@ -39,8 +43,8 @@ class Album {
   const Album({required this.content, this.picture});
 
   factory Album.fromJson(Map<String, dynamic> json) {
-    print(json['picture']);
-    return Album(content: json['description'], picture: json['picture']);
+
+    return Album(description: json['content'], image: json['image']);
   }
 }
 
@@ -103,9 +107,9 @@ class _MyAppState extends State<MyApp> {
                 if (snapshot.hasData) {
                   return Column(
                     children: [
-                      // Text(snapshot.data!.content),
-                   // if (snapshot.data!.picture != null)
-                        Image.network('http://localhost/storage/posts/Qp7rRraKhEv6jsaXei8Gz8vJC9tu8PecJSjkNxwI.jpg'),
+                      Text(snapshot.data!.description),
+                      // if (snapshot.data!.image != null)
+                        Image.network('http://192.168.6.143/storage/posts/Qp7rRraKhEv6jsaXei8Gz8vJC9tu8PecJSjkNxwI.jpg'),
                     ],
                   );
                 } else if (snapshot.hasError) {
