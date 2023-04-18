@@ -65,6 +65,7 @@ flutter:
     - images/cat.png
     - images/Insta_logo.png
     - images/story-circle.png
+    - images/verification-badge.png
 # To add assets to your application, add an assets section, like this:
 
 #   - images/a_dot_burr.jpeg
