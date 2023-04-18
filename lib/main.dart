@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:my_app/post_widget.dart';
+import 'story_widget.dart';
 
 Future<Album> fetchPost() async {
   final response = await http.get(Uri.parse('http://localhost/api/posts'));
@@ -12,47 +13,45 @@ Future<Album> fetchPost() async {
     // then parse the JSON.
     //final jsonResponse = jsonDecode(response.body);
     return Album.fromJson(jsonDecode(response.body));
-    }
-    else {
+  } else {
     throw Exception('Failed to load description');
-    }
+  }
 
+  //if (jsonResponse is List) {
+  //final firstItem = jsonResponse[0];
+  //print('firstitem ${firstItem}');
+  //print(jsonResponse);
+  // final description = firstItem['content'];
+  //final pic = firstItem['picture'];
+  //final image = "http://192.168.6.143/storage/" + pic;
+  //print(image);
+  // return Album.fromJson({'content': description, 'image': image});
+}
+// else if (jsonResponse is Map<String, dynamic>) {
+// Handle the case when jsonResponse is a map
+// You can access the properties of the object using jsonResponse['propertyName']
+// final description = jsonResponse['description'];
+// final image = jsonResponse['picture'];
+//return Album.fromJson(
+// {'description': description, 'image': image != null ? image : ''});
+//}
+//}
 
-    //if (jsonResponse is List) {
-      //final firstItem = jsonResponse[0];
-      //print('firstitem ${firstItem}');
-      //print(jsonResponse);
-     // final description = firstItem['content'];
-      //final pic = firstItem['picture'];
-      //final image = "http://192.168.6.143/storage/" + pic;
-      //print(image);
-     // return Album.fromJson({'content': description, 'image': image});
-
-    }
-    // else if (jsonResponse is Map<String, dynamic>) {
-      // Handle the case when jsonResponse is a map
-      // You can access the properties of the object using jsonResponse['propertyName']
-      // final description = jsonResponse['description'];
-      // final image = jsonResponse['picture'];
-      //return Album.fromJson(
-          // {'description': description, 'image': image != null ? image : ''});
-    //}
-  //}
-
-  // If the server did not return a 200 OK response,
-  // then throw an exception.
-  //
+// If the server did not return a 200 OK response,
+// then throw an exception.
+//
 //}
 
 class Album {
   final String description;
   final String picture;
 
-
   const Album({required this.description, required this.picture});
 
   factory Album.fromJson(Map<String, dynamic> json) {
-    return Album(description: json['content'], picture: "http://192.168.6.143/storage/+ ${json['picture']}");
+    return Album(
+        description: json['content'],
+        picture: "http://192.168.6.143/storage/+ ${json['picture']}");
   }
 }
 
@@ -92,7 +91,7 @@ class _MyAppState extends State<MyApp> {
           actions: <Widget>[
             IconButton(
               icon: const Icon(
-                Icons.add_a_photo_outlined,
+                Icons.add_box_outlined,
                 color: Colors.black,
               ),
               onPressed: () {},
@@ -109,26 +108,34 @@ class _MyAppState extends State<MyApp> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-            FutureBuilder<Album>(
-              future: futureAlbum,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Column(
-                    children: [
-                      Text(snapshot.data!.description),
-                      // if (snapshot.data!.image != null)
-                        Image.network('http://192.168.6.143/storage/posts/Qp7rRraKhEv6jsaXei8Gz8vJC9tu8PecJSjkNxwI.jpg'),
-                    ],
-                  );
-                } else if (snapshot.hasError) {
-                  return Text('${snapshot.error}');
-                }
-                // By default, show a loading spinner.
-                return const CircularProgressIndicator();
-              },
-            ),
-          ],
-        ),
+              const Divider(
+                thickness: 2,
+              ),
+              StoryWidget(),
+              const Divider(
+                thickness: 2,
+              ),
+              FutureBuilder<Album>(
+                future: futureAlbum,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Column(
+                      children: [
+                        Text(snapshot.data!.description),
+                        // if (snapshot.data!.image != null)
+                        Image.network(
+                            'http://192.168.6.143/storage/posts/Qp7rRraKhEv6jsaXei8Gz8vJC9tu8PecJSjkNxwI.jpg'),
+                      ],
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('${snapshot.error}');
+                  }
+                  // By default, show a loading spinner.
+                  return const CircularProgressIndicator();
+                },
+              ),
+            ],
+          ),
         ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
@@ -138,15 +145,15 @@ class _MyAppState extends State<MyApp> {
           selectedItemColor: Colors.black,
           items: const [
             BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.home_outlined,
-                ),
+              icon: Icon(
+                Icons.home_outlined,
+              ),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-                icon: Icon(
+              icon: Icon(
                 Icons.search,
-                ),
+              ),
               label: 'Search',
             ),
             BottomNavigationBarItem(
