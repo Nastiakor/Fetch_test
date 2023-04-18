@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:my_app/post_widget.dart';
+import 'story_widget.dart';
 
 Future<List<Album>> fetchPost() async {
   print('fetchPost: Sending request...');
@@ -29,13 +30,14 @@ class Album {
   final String description;
   final String picture;
 
-
   const Album({required this.description, required this.picture});
 
   factory Album.fromJson(Map<String, dynamic> json) {
+
     print('Album.fromJson - json contents: $json');
     return Album(description: json['content'],
       picture: "http://192.168.6.143/storage/" + json['picture']);
+
   }
 }
 
@@ -75,7 +77,7 @@ class _MyAppState extends State<MyApp> {
           actions: <Widget>[
             IconButton(
               icon: const Icon(
-                Icons.add_a_photo_outlined,
+                Icons.add_box_outlined,
                 color: Colors.black,
               ),
               onPressed: () {},
@@ -92,6 +94,15 @@ class _MyAppState extends State<MyApp> {
         body:SingleChildScrollView(
           child: Column(
             children: [
+
+              const Divider(
+                thickness: 2,
+              ),
+              StoryWidget(),
+              const Divider(
+                thickness: 2,
+              ),
+         
               FutureBuilder<List<Album>>(
                 future: futureAlbumList,
                 builder: (context, snapshot) {
@@ -127,15 +138,15 @@ class _MyAppState extends State<MyApp> {
           selectedItemColor: Colors.black,
           items: const [
             BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.home_outlined,
-                ),
+              icon: Icon(
+                Icons.home_outlined,
+              ),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-                icon: Icon(
+              icon: Icon(
                 Icons.search,
-                ),
+              ),
               label: 'Search',
             ),
             BottomNavigationBarItem(
