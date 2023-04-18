@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:my_app/post_widget.dart';
 
 Future<Album> fetchPost() async {
   final response = await http.get(Uri.parse('http://localhost/api/posts'));
@@ -36,12 +37,13 @@ Future<Album> fetchPost() async {
 }
 
 class Album {
-  final String description;
-  final String? image;
+  final String content;
+  final String? picture;
 
-  const Album({required this.description, this.image});
+  const Album({required this.content, this.picture});
 
   factory Album.fromJson(Map<String, dynamic> json) {
+
     return Album(description: json['content'], image: json['image']);
   }
 }
@@ -67,16 +69,38 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Fetch Data Example',
+      title: 'Flutter Instagram',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Fetch Data Example'),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: Image.asset(
+            'images/Insta_logo.png',
+            height: 50,
+          ),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(
+                Icons.add_a_photo_outlined,
+                color: Colors.black,
+              ),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: const Icon(
+                Icons.favorite_border_outlined,
+                color: Colors.black,
+              ),
+              onPressed: () {},
+            ),
+          ],
         ),
-        body: Column(
-          children: [
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
             FutureBuilder<Album>(
               future: futureAlbum,
               builder: (context, snapshot) {
@@ -94,6 +118,46 @@ class _MyAppState extends State<MyApp> {
                 // By default, show a loading spinner.
                 return const CircularProgressIndicator();
               },
+            ),
+          ],
+        ),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          unselectedItemColor: Colors.grey.shade700,
+          selectedItemColor: Colors.black,
+          items: const [
+            BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.home_outlined,
+                ),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(
+                Icons.search,
+                ),
+              label: 'Search',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.video_camera_back_outlined,
+              ),
+              label: 'Video',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.message_rounded,
+              ),
+              label: 'Message',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.person_off_outlined,
+              ),
+              label: 'Profile',
             ),
           ],
         ),
