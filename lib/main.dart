@@ -6,7 +6,7 @@ import 'story_widget.dart';
 
 Future<List<Album>> fetchPost() async {
   print('fetchPost: Sending request...');
-  final response = await http.get(Uri.parse('http://192.168.6.143/api/posts'));
+  final response = await http.get(Uri.parse('http://localhost/api/posts'));
 
   print('fetchPost: Response received - statusCode: ${response.statusCode}');
 
@@ -35,7 +35,7 @@ class Album {
     print('Album.fromJson - json contents: $json');
     return Album(
         description: json['content'],
-        picture: "http://192.168.6.143/storage/" + json['picture']);
+        picture: "http://localhost/storage/" + json['picture']);
   }
 }
 
@@ -184,7 +184,7 @@ class _MyAppState extends State<MyApp> {
                                               radius: 10,
                                               backgroundColor: Colors.grey,
                                               backgroundImage: AssetImage(
-                                                  "nicolas_cage_crazy"),
+                                                  "images/nicolas_cage_crazy.webp"),
                                             ),
                                             const SizedBox(width: 10),
                                             RichText(
@@ -304,19 +304,19 @@ class _MyAppState extends State<MyApp> {
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                Icons.video_camera_back_outlined,
+                Icons.videocam_outlined,
               ),
               label: 'Video',
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                Icons.message_rounded,
+                Icons.shopping_bag_outlined,
               ),
               label: 'Message',
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                Icons.person_off_outlined,
+                Icons.person_outline_outlined,
               ),
               label: 'Profile',
             ),

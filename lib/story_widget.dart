@@ -12,6 +12,26 @@ class StoryWidget extends StatelessWidget {
       "pseudo": 'Nasty',
       "photo": "images/flower.jpg",
     },
+
+    {
+      "pseudo": 'Jojo',
+      "photo": "images/cat.png",
+    },
+
+    {
+      "pseudo": 'Nasty',
+      "photo": "images/flower.jpg",
+    },
+
+    {
+      "pseudo": 'Jojo',
+      "photo": "images/cat.png",
+    },
+
+    {
+      "pseudo": 'Nasty',
+      "photo": "images/flower.jpg",
+    },
   ];
 
   @override
@@ -22,7 +42,6 @@ class StoryWidget extends StatelessWidget {
         children: storyItems.map((story) {
           return Container(
             margin: const EdgeInsets.symmetric(horizontal: 5),
-            color: Colors.white,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -31,15 +50,15 @@ class StoryWidget extends StatelessWidget {
                   children: [
                     Image.asset(
                       'images/story-circle.png',
-                      height: 70,
+                      height: 77,
                     ),
                     Image.asset(
                       'images/story-circle.png',
-                      height: 68,
+                      height: 75,
                     ),
                     CircleAvatar(
                       backgroundColor: Colors.white,
-                      radius: 30,
+                      radius: 37,
                       backgroundImage: AssetImage(story['photo']),
                     ),
                   ],
